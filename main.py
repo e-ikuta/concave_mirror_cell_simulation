@@ -1,12 +1,16 @@
 import math
+import yaml
 
-d = float(input("ミラー間距離(mm) = "))
-r = float(input("曲率半径(mm) = "))
-n = float(input("反射回数 = "))
-x_0 = float(input("x軸入射位置(mm) = "))
-alpha_0 = math.radians(float(input("x軸入射角度(deg) = ")))
-y_0 = float(input("y軸入射位置(mm) = "))
-beta_0 = math.radians(float(input("y軸入射角度(deg) = ")))
+with open('config.yml', 'r') as f:
+    config = yaml.safe_load(f)
+
+d = float(config['d'])
+r = float(config['r'])
+n = float(config['n'])
+x_0 = float(config['x_0'])
+alpha_0 = math.radians(float(config['alpha_0']))
+y_0 = float(config['y_0'])
+beta_0 = math.radians(float(config['beta_0']))
 
 def gamma_0(alpha_0, beta_0):
     return math.asin((1 - (math.sin(alpha_0))**2 - (math.sin(beta_0))**2)**0.5)
