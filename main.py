@@ -48,25 +48,46 @@ def shita_n(i, shita, r):
 def gamma_n(alpha, beta, n):
     return math.asin((1 - math.sin(alpha)**2 - math.sin(beta)**2)**0.5) / (-1)**(n)
 
+# x軸入射位置(mm)
+x = x_0
+# x軸入射角度(rad)
+alpha = alpha_0
+# y軸入射位置(mm)
+y = y_0
+# y軸入射角度(rad)
+beta = beta_0
 # z軸入射位置(mm)
-z_0 = z_0(r, x_0, y_0)
+z = z_0(r, x_0, y_0)
 # z軸入射角度(rad)
-gamma_0 = gamma_0(alpha_0, beta_0)
+gamma = gamma_0(alpha_0, beta_0)
+# 反射回数
+i = 1
 
-a_1 = a_n(gamma_0)
-b_1 = b_n(x_0, alpha_0, y_0, beta_0, z_0, gamma_0, d, r, 1)
-c_1 = c_n(x_0, alpha_0, y_0, beta_0, z_0, gamma_0, d, r, 1)
-z_1 = z_n(a_1, b_1, c_1, gamma_0, 1)
-d_1 = d_n(z_0, z_1, gamma_0)
-x_1 = i_n(x_0, alpha_0, d_1)
-alpha_1 = shita_n(x_1, alpha_0, r)
-y_1 = i_n(y_0, beta_0, d_1)
-beta_1 = shita_n(y_1, beta_0, r)
-gamma_1 = gamma_n(alpha_1, beta_1, 1)
+while i <= n:
+    print(i)
 
-print(f"x_1: {x_1}")
-print(f"alpha_1: {alpha_1}")
-print(f"y_1: {y_1}")
-print(f"beta_1: {beta_1}")
-print(f"z_1: {z_1}")
-print(f"gamma_1: {gamma_1}")
+    a = a_n(gamma)
+    b = b_n(x, alpha, y, beta, z, gamma, d, r, i)
+    c = c_n(x, alpha, y, beta, z, gamma, d, r, i)
+    z_after = z_n(a, b, c, gamma, i)
+    dd = d_n(z, z_after, gamma)
+    x_after = i_n(x, alpha, dd)
+    alpha_after = shita_n(x_after, alpha, r)
+    y_after = i_n(y, beta, dd)
+    beta_after = shita_n(y_after, beta, r)
+    gamma_after = gamma_n(alpha_after, beta_after, i)
+
+    x = x_after
+    alpha = alpha_after
+    y = y_after
+    beta = beta_after
+    z = z_after
+    gamma = gamma_after
+    i += 1
+
+    print(f"x: {x}")
+    print(f"alpha: {alpha}")
+    print(f"y: {y}")
+    print(f"beta: {beta}")
+    print(f"z: {z}")
+    print(f"gamma: {gamma}")
