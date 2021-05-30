@@ -1,17 +1,5 @@
 import math
-import yaml
 import csv
-
-with open('config.yml', 'r') as f:
-    config = yaml.safe_load(f)
-
-d = float(config['d'])
-r = float(config['r'])
-n = float(config['n'])
-x_0 = float(config['x_0'])
-alpha_0 = math.radians(float(config['alpha_0']))
-y_0 = float(config['y_0'])
-beta_0 = math.radians(float(config['beta_0']))
 
 def gamma_0(alpha_0, beta_0):
     return math.asin((1 - (math.sin(alpha_0))**2 - (math.sin(beta_0))**2)**0.5)
@@ -56,6 +44,13 @@ def satisfy_the_requirements(optical_path_length, last_position_from_mirror_cent
     return (optical_path_length > 30 and
            (19 < last_position_from_mirror_center and last_position_from_mirror_center < 21))
 
+r = float(200)
+x_0 = float(20)
+y_0 = float(0)
+n = float(203)
+alpha_0 = math.radians(float(-6))
+beta_0 = math.radians(float(-6))
+
 # x軸入射位置(mm)
 x = x_0
 # x軸入射角度(rad)
@@ -71,46 +66,51 @@ gamma = gamma_0(alpha_0, beta_0)
 # 反射回数
 i = 1
 
-while i <= n:
-    a = a_n(gamma)
-    b = b_n(x, alpha, y, beta, z, gamma, d, r, i)
-    c = c_n(x, alpha, y, beta, z, gamma, d, r, i)
-    z_after = z_n(a, b, c, gamma, i)
-    dd = d_n(z, z_after, gamma)
-    x_after = i_n(x, alpha, dd)
-    alpha_after = shita_n(x_after, alpha, r)
-    y_after = i_n(y, beta, dd)
-    beta_after = shita_n(y_after, beta, r)
-    gamma_after = gamma_n(alpha_after, beta_after, i)
-
-    x = x_after
-    alpha = alpha_after
-    y = y_after
-    beta = beta_after
-    z = z_after
-    gamma = gamma_after
-
-    if distance_from_mirror_center(x, y) > 25:
-        break
-
-    i += 1
-
-
-# 光路長(m)
-l = d * n / 1000
-# ミラーの中心から最終位置までの距離(mm)
-dc = distance_from_mirror_center(x, y)
-
 all_config = [['d', 'r', 'n', 'x_0', 'alpha_0', 'y_0', 'beta_0', 'l', 'dc']]
-all_config.append([d, r, n, x_0, alpha_0, y_0, beta_0, l, dc])
+selected_config = [['d', 'r', 'n', 'x_0', 'alpha_0', 'y_0', 'beta_0', 'l', 'dc']]
+
+d = float(100)
+while 100 <= d and d <= 200:
+
+    while i <= n:
+        a = a_n(gamma)
+        b = b_n(x, alpha, y, beta, z, gamma, d, r, i)
+        c = c_n(x, alpha, y, beta, z, gamma, d, r, i)
+        z_after = z_n(a, b, c, gamma, i)
+        dd = d_n(z, z_after, gamma)
+        x_after = i_n(x, alpha, dd)
+        alpha_after = shita_n(x_after, alpha, r)
+        y_after = i_n(y, beta, dd)
+        beta_after = shita_n(y_after, beta, r)
+        gamma_after = gamma_n(alpha_after, beta_after, i)
+
+        x = x_after
+        alpha = alpha_after
+        y = y_after
+        beta = beta_after
+        z = z_after
+        gamma = gamma_after
+
+        if distance_from_mirror_center(x, y) > 25:
+            break
+
+        i += 1
+
+    # 光路長(m)
+    l = d * i / 1000
+    # ミラーの中心から最終位置までの距離(mm)
+    dc = distance_from_mirror_center(x, y)
+
+    all_config.append([d, r, n, x_0, alpha_0, y_0, beta_0, l, dc])
+
+    if satisfy_the_requirements(l, dc):
+        selected_config.append([d, r, n, x_0, alpha_0, y_0, beta_0, l, dc])
+
+    d += 1
 
 with open('all_config.csv', 'w') as f:
     writer = csv.writer(f)
     writer.writerows(all_config)
-
-selected_config = [['d', 'r', 'n', 'x_0', 'alpha_0', 'y_0', 'beta_0', 'l', 'dc']]
-if satisfy_the_requirements(l, dc):
-    selected_config.append([d, r, n, x_0, alpha_0, y_0, beta_0, l, dc])
 
 with open('selected_config.csv', 'w') as f:
     writer = csv.writer(f)
