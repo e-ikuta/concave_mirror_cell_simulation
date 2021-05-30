@@ -49,6 +49,13 @@ def shita_n(i, shita, r):
 def gamma_n(alpha, beta, n):
     return math.asin((1 - math.sin(alpha)**2 - math.sin(beta)**2)**0.5) / (-1)**(n)
 
+def distance_from_mirror_center(x, y):
+    return (x**2 + y**2)**0.5
+
+def satisfy_the_requirements(optical_path_length, last_position_from_mirror_center):
+    return (optical_path_length > 30 and
+           (19 < last_position_from_mirror_center and last_position_from_mirror_center < 21))
+
 # x軸入射位置(mm)
 x = x_0
 # x軸入射角度(rad)
@@ -64,7 +71,6 @@ gamma = gamma_0(alpha_0, beta_0)
 # 反射回数
 i = 1
 
-result = [['x', 'alpha', 'y', 'beta', 'z', 'gamma']]
 while i <= n:
     a = a_n(gamma)
     b = b_n(x, alpha, y, beta, z, gamma, d, r, i)
@@ -83,10 +89,29 @@ while i <= n:
     beta = beta_after
     z = z_after
     gamma = gamma_after
+
+    if distance_from_mirror_center(x, y) > 25:
+        break
+
     i += 1
 
-    result.append([x, alpha, y, beta, z, gamma])
 
-with open('output.csv', 'w') as f:
+# 光路長(m)
+l = d * n / 1000
+# ミラーの中心から最終位置までの距離(mm)
+dc = distance_from_mirror_center(x, y)
+
+all_config = [['d', 'r', 'n', 'x_0', 'alpha_0', 'y_0', 'beta_0', 'l', 'dc']]
+all_config.append([d, r, n, x_0, alpha_0, y_0, beta_0, l, dc])
+
+with open('all_config.csv', 'w') as f:
     writer = csv.writer(f)
-    writer.writerows(result)
+    writer.writerows(all_config)
+
+selected_config = [['d', 'r', 'n', 'x_0', 'alpha_0', 'y_0', 'beta_0', 'l', 'dc']]
+if satisfy_the_requirements(l, dc):
+    selected_config.append([d, r, n, x_0, alpha_0, y_0, beta_0, l, dc])
+
+with open('selected_config.csv', 'w') as f:
+    writer = csv.writer(f)
+    writer.writerows(selected_config)
