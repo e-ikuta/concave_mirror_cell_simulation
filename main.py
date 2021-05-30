@@ -1,5 +1,6 @@
 import math
 import yaml
+import csv
 
 with open('config.yml', 'r') as f:
     config = yaml.safe_load(f)
@@ -63,9 +64,8 @@ gamma = gamma_0(alpha_0, beta_0)
 # 反射回数
 i = 1
 
+result = [['x', 'alpha', 'y', 'beta', 'z', 'gamma']]
 while i <= n:
-    print(i)
-
     a = a_n(gamma)
     b = b_n(x, alpha, y, beta, z, gamma, d, r, i)
     c = c_n(x, alpha, y, beta, z, gamma, d, r, i)
@@ -85,9 +85,8 @@ while i <= n:
     gamma = gamma_after
     i += 1
 
-    print(f"x: {x}")
-    print(f"alpha: {alpha}")
-    print(f"y: {y}")
-    print(f"beta: {beta}")
-    print(f"z: {z}")
-    print(f"gamma: {gamma}")
+    result.append([x, alpha, y, beta, z, gamma])
+
+with open('output.csv', 'w') as f:
+    writer = csv.writer(f)
+    writer.writerows(result)
