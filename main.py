@@ -1,5 +1,7 @@
-input_file = input("入力ファイル名 = ")
-output_file = input("出力ファイル名 = ")
+# input_file = input("入力ファイル名 = ")
+# output_file = input("出力ファイル名 = ")
+input_file = 'input.yml'
+output_file = 'output.csv'
 
 import csv
 import yaml
