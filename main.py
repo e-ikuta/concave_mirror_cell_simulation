@@ -1,117 +1,72 @@
-import math
 import csv
+import yaml
 
-def gamma_0(alpha_0, beta_0):
-    return math.asin((1 - (math.sin(alpha_0))**2 - (math.sin(beta_0))**2)**0.5)
+from a_n import a_n
+from b_n import b_n
+from c_n import c_n
+from d_n import d_n
+from degree_to_radian import degree_to_radian
+from gamma_0 import gamma_0
+from gamma_n import gamma_n
+from i_n import i_n
+from shita_n import shita_n
+from z_0 import z_0
+from z_n import z_n
+from distance_from_mirror_center import distance_from_mirror_center
 
-def z_0(r, x_0, y_0):
-    return r - (r**2 - x_0**2 - y_0**2)**0.5
+with open('input.yml', 'r') as f:
+    input = yaml.safe_load(f)
 
-def a_n(gamma):
-    return (math.sin(gamma))**(-2)
+d = input['d']
+r = input['r']
+n = input['n']
+x_0 = input['x_0']
+alpha_0 = degree_to_radian(input['alpha_0'])
+y_0 = input['y_0']
+beta_0 = degree_to_radian(input['beta_0'])
 
-def b_n(x, alpha, y, beta, z, gamma, d, r, n):
-    calc_1 = (x * math.sin(alpha) + y * math.sin(beta)) / math.sin(gamma)
-    calc_2 = (1 - 1 / math.sin(gamma)**2) * z
-    calc_3 = -((1 + (-1)**(n-1)) * d / 2 + (-1)**n * r)
-    return (calc_1 + calc_2 + calc_3) * 2
-
-def c_n(x, alpha, y, beta, z, gamma, d, r, n):
-    calc_1 = (x - math.sin(alpha) / math.sin(gamma) * z)**2
-    calc_2 = (y - math.sin(beta) / math.sin(gamma) * z)**2
-    calc_3 = ((1 + (-1)**(n-1)) * d / 2 + (-1)**n * r)**2 - r**2
-    return calc_1 + calc_2 + calc_3
-
-def z_n(a, b, c, gamma, n):
-    return math.sin(gamma)**2 * (-b / 2 + (-1)**(n-1) * ((b / 2)**2 - a * c)**(0.5))
-
-def d_n(z_before, z_after, gamma):
-    return (z_after - z_before) / math.sin(gamma)
-
-def i_n(i, shita, d_n):
-    return i + d_n * math.sin(shita)
-
-def shita_n(i, shita, r):
-    return -2 * math.asin(i / r) + shita
-
-def gamma_n(alpha, beta, n):
-    return math.asin((1 - math.sin(alpha)**2 - math.sin(beta)**2)**0.5) / (-1)**(n)
-
-def distance_from_mirror_center(x, y):
-    return (x**2 + y**2)**0.5
-
-def satisfy_the_requirements(optical_path_length, last_position_from_mirror_center):
-    return (optical_path_length > 30 and
-           (19 < last_position_from_mirror_center and last_position_from_mirror_center < 21))
-
-r = float(200)
-x_0 = float(20)
-y_0 = float(0)
-n = float(203)
-alpha_0 = math.radians(float(-6))
-beta_0 = math.radians(float(-6))
-
-# x軸入射位置(mm)
 x = x_0
-# x軸入射角度(rad)
 alpha = alpha_0
-# y軸入射位置(mm)
 y = y_0
-# y軸入射角度(rad)
 beta = beta_0
-# z軸入射位置(mm)
 z = z_0(r, x_0, y_0)
-# z軸入射角度(rad)
 gamma = gamma_0(alpha_0, beta_0)
-# 反射回数
-i = 1
+l = 0
+i = 0
 
-all_config = [['d', 'r', 'n', 'x_0', 'alpha_0', 'y_0', 'beta_0', 'l', 'dc']]
-selected_config = [['d', 'r', 'n', 'x_0', 'alpha_0', 'y_0', 'beta_0', 'l', 'dc']]
-
-d = float(100)
-while 100 <= d and d <= 200:
-
-    while i <= n:
-        a = a_n(gamma)
-        b = b_n(x, alpha, y, beta, z, gamma, d, r, i)
-        c = c_n(x, alpha, y, beta, z, gamma, d, r, i)
-        z_after = z_n(a, b, c, gamma, i)
-        dd = d_n(z, z_after, gamma)
-        x_after = i_n(x, alpha, dd)
-        alpha_after = shita_n(x_after, alpha, r)
-        y_after = i_n(y, beta, dd)
-        beta_after = shita_n(y_after, beta, r)
-        gamma_after = gamma_n(alpha_after, beta_after, i)
-
-        x = x_after
-        alpha = alpha_after
-        y = y_after
-        beta = beta_after
-        z = z_after
-        gamma = gamma_after
-
-        if distance_from_mirror_center(x, y) > 25:
-            break
-
-        i += 1
-
-    # 光路長(m)
-    l = d * i / 1000
-    # ミラーの中心から最終位置までの距離(mm)
-    dc = distance_from_mirror_center(x, y)
-
-    all_config.append([d, r, n, x_0, alpha_0, y_0, beta_0, l, dc])
-
-    if satisfy_the_requirements(l, dc):
-        selected_config.append([d, r, n, x_0, alpha_0, y_0, beta_0, l, dc])
-
-    d += 1
-
-with open('all_config.csv', 'w') as f:
+output = [['反射回数', '光路長(m)', '位置x(mm)', '位置y(mm)']]
+output.append([i, l, x, y])
+with open('output.csv', 'w') as f:
     writer = csv.writer(f)
-    writer.writerows(all_config)
+    writer.writerows(output)
 
-with open('selected_config.csv', 'w') as f:
-    writer = csv.writer(f)
-    writer.writerows(selected_config)
+i += 1
+
+while i <= n:
+    a = a_n(gamma)
+    b = b_n(x, alpha, y, beta, z, gamma, d, r, i)
+    c = c_n(x, alpha, y, beta, z, gamma, d, r, i)
+    z_after = z_n(a, b, c, gamma, i)
+    dd = d_n(z, z_after, gamma)
+    x_after = i_n(x, alpha, dd)
+    alpha_after = shita_n(x_after, r, alpha)
+    y_after = i_n(y, beta, dd)
+    beta_after = shita_n(y_after, r, beta)
+    gamma_after = gamma_n(alpha_after, beta_after, i)
+
+    x = x_after
+    alpha = alpha_after
+    y = y_after
+    beta = beta_after
+    z = z_after
+    gamma = gamma_after
+    l += (dd / 1000)
+
+    if distance_from_mirror_center(x, y) > 25:
+        break
+
+    with open('output.csv', 'a') as f:
+        writer = csv.writer(f)
+        writer.writerows([[i, l, x, y]])
+
+    i += 1
