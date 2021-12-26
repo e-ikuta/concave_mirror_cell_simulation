@@ -8,7 +8,7 @@ from d_n import d_n
 from degree_to_radian import degree_to_radian
 from gamma_0 import gamma_0
 from gamma_n import gamma_n
-from i_n import i_n
+from p_n import p_n
 from shita_n import shita_n
 from z_0 import z_0
 from z_n import z_n
@@ -48,9 +48,9 @@ while i <= n:
     c = c_n(x, alpha, y, beta, z, gamma, d, r, i)
     z_after = z_n(a, b, c, gamma, i)
     dd = d_n(z, z_after, gamma)
-    x_after = i_n(x, alpha, dd)
+    x_after = p_n(x, alpha, dd)
     alpha_after = shita_n(x_after, r, alpha)
-    y_after = i_n(y, beta, dd)
+    y_after = p_n(y, beta, dd)
     beta_after = shita_n(y_after, r, beta)
     gamma_after = gamma_n(alpha_after, beta_after, i)
 
