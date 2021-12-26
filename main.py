@@ -5,7 +5,6 @@ output_file = 'output.csv'
 
 import csv
 import yaml
-from fractions import Fraction
 
 from a_n import a_n
 from b_n import b_n
@@ -23,13 +22,13 @@ from distance_from_mirror_center import distance_from_mirror_center
 with open(input_file, 'r') as f:
     input = yaml.safe_load(f)
 
-d = Fraction(input['d'])
-r = Fraction(input['r'])
-n = Fraction(input['n'])
-x_0 = Fraction(input['x_0'])
-alpha_0 = degree_to_radian(Fraction(input['alpha_0']))
-y_0 = Fraction(input['y_0'])
-beta_0 = degree_to_radian(Fraction(input['beta_0']))
+d = input['d']
+r = input['r']
+n = input['n']
+x_0 = input['x_0']
+alpha_0 = degree_to_radian(input['alpha_0'])
+y_0 = input['y_0']
+beta_0 = degree_to_radian(input['beta_0'])
 
 x = x_0
 alpha = alpha_0
@@ -37,8 +36,8 @@ y = y_0
 beta = beta_0
 z = z_0(r, x_0, y_0)
 gamma = gamma_0(alpha_0, beta_0)
-l = Fraction(0)
-i = Fraction(0)
+l = 0
+i = 0
 
 output = [['反射回数', '光路長(m)', '位置x(mm)', '位置y(mm)']]
 output.append([i, l, x, y])
@@ -73,6 +72,6 @@ while i <= n:
 
     with open(output_file, 'a') as f:
         writer = csv.writer(f)
-        writer.writerows([[i, float(l), float(x), float(y)]])
+        writer.writerows([[i, l, x, y]])
 
     i += 1

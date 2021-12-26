@@ -1,8 +1,7 @@
 import math
-from fractions import Fraction
 
 def p_n(p, shita, d_n):
-    return Fraction(p) + Fraction(d_n) * Fraction(math.sin(shita))
+    return p + d_n * math.sin(shita)
 
 # p = float(input("前回の反射位置(mm) = "))
 # shita = float(input("前回の反射角度(rad) = "))

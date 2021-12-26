@@ -1,11 +1,10 @@
 import math
-from fractions import Fraction
 
 def c_n(x, alpha, y, beta, z, gamma, d, r, n):
-    calc_1 = (Fraction(x) - Fraction(math.sin(alpha)) / Fraction(math.sin(gamma)) * Fraction(z))**2
-    calc_2 = (Fraction(y) - Fraction(math.sin(beta)) / Fraction(math.sin(gamma)) * Fraction(z))**2
-    calc_3 = ((Fraction(1) + Fraction((-1)**(n-1))) * Fraction(d) / Fraction(2) + Fraction((-1)**n) * Fraction(r))**2 - Fraction(r**2)
-    return Fraction(calc_1) + Fraction(calc_2) + Fraction(calc_3)
+    calc_1 = (x - math.sin(alpha) / math.sin(gamma) * z)**2
+    calc_2 = (y - math.sin(beta) / math.sin(gamma) * z)**2
+    calc_3 = ((1 + (-1)**(n-1)) * d / 2 + (-1)**n * r)**2 - r**2
+    return calc_1 + calc_2 + calc_3
 
 # x = float(input("前回のx軸反射位置(mm) = "))
 # alpha = float(input("前回のx軸反射角度(rad) = "))

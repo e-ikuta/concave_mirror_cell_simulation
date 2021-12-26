@@ -1,8 +1,7 @@
 import math
-from fractions import Fraction
 
 def shita_n(p, r, shita):
-    return Fraction(-2) * Fraction(math.asin(Fraction(p) / Fraction(r))) + Fraction(shita)
+    return -2 * math.asin(p / r) + shita
 
 # p = float(input("今回の反射位置(mm) = "))
 # r = float(input("曲率半径(mm) = "))
