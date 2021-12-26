@@ -1,3 +1,6 @@
+input_file = input("入力ファイル名 = ")
+output_file = input("出力ファイル名 = ")
+
 import csv
 import yaml
 
@@ -14,7 +17,7 @@ from z_0 import z_0
 from z_n import z_n
 from distance_from_mirror_center import distance_from_mirror_center
 
-with open('input.yml', 'r') as f:
+with open(input_file, 'r') as f:
     input = yaml.safe_load(f)
 
 d = input['d']
@@ -36,7 +39,7 @@ i = 0
 
 output = [['反射回数', '光路長(m)', '位置x(mm)', '位置y(mm)']]
 output.append([i, l, x, y])
-with open('output.csv', 'w') as f:
+with open(output_file, 'w') as f:
     writer = csv.writer(f)
     writer.writerows(output)
 
@@ -65,7 +68,7 @@ while i <= n:
     if distance_from_mirror_center(x, y) > 25:
         break
 
-    with open('output.csv', 'a') as f:
+    with open(output_file, 'a') as f:
         writer = csv.writer(f)
         writer.writerows([[i, l, x, y]])
 
